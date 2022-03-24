@@ -1,3 +1,7 @@
+"""
+inference code reference : phil Multi-VAE inference code
+"""
+
 import ast
 import os
 from tqdm import tqdm
