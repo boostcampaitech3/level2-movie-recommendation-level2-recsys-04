@@ -1,6 +1,6 @@
 # Enhancing VAEs for Collaborative Filtering: Flexible Priors & Gating Mechanisms
 
-### 먼저 utils/loda_data.py 들어가셔서 데이터 경로를 본인의 pro_sg로 다 바꿔주셔야 합니다.(저희 Multi-VAE에서 생성한 파일들과 동일하니 그 경로로 설정해주시면 됩니다)  
+### 먼저 utils/loda_data.py 들어가셔서 데이터 경로를 본인의 data/train/pro_sg로 다 바꿔주셔야 합니다.(저희 Multi-VAE에서 생성한 파일들과 동일하니 그 경로로 설정해주시면 됩니다)  
 ### python experiment.py하면 제 기본 세팅으로 훈련이 됩니다.  
 ### 훈련된 모델로 Inference 하시고 싶으시면 python experiment.py —inference True하시면 됩니다.(제 기준 input/submission폴더에 evcf_test.csv로 제출파일이 형성됩니다)
 ### 리더보드 기준 valid 없이(n_heldout=0)한 모델이 최고여서 이 모델 훈련 과정에서도 valid 관련 코드를 주석처리 해두었습니다(원하시면 푸셔도 됩니다)
