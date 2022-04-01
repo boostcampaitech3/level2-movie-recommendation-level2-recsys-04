@@ -4,6 +4,8 @@
 #### python run.py --dataset(전처리 파일들 저장한 곳) 하시고 기타 설정은 입맞에 맞게 바꿔주시면 됩니다(모델, 제출파일 이름은 --save 등등...)
 #### run.py 실행시키실 때 --train True --infrenece True 하시면 훈련부터 제출파일 저장까지 한 번에 되고 하나씩 하고 싶으실 때는 원하시는 인자만 True로 주시면 됩니다.
 
+-------------------------------------
+
 The official PyTorch implementation of the paper "RecVAE: A New Variational Autoencoder for Top-N Recommendations with Implicit Feedback".
 
 In order to train RecVAE on MovieLens-20M dataset ([download link](http://files.grouplens.org/datasets/movielens/ml-20m.zip)), preprocess it using following script:
