@@ -38,7 +38,7 @@ def inference(args, device):
 
     k = 10
     output = model(data_tensor, calculate_loss=False).cpu().detach().numpy()
-    idx = bn.argpartition(-output, k, axis=1) # user별로 추천할 itemId가 순서대로 담긴 행렬
+    idx = np.argsort(-output, axis=1) # user별로 추천할 itemId가 순서대로 담긴 행렬
 
     # pred_dic에 user별로 추천 영화 리스트로 넣기
     # idx의 행이 profile2id의 0,1,2... 순서 

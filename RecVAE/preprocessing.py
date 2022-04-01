@@ -14,7 +14,7 @@ parser.add_argument('--dataset', type=str, default='/opt/ml/input/data/train/tra
 parser.add_argument('--output_dir', type=str, default='/opt/ml/input/data/train/recvae_data')
 parser.add_argument('--min_items_per_user', type=int, default=5)
 parser.add_argument('--min_users_per_item', type=int, default=0)
-parser.add_argument('--heldout_users', type=int, default=1000)
+parser.add_argument('--heldout_users', type=int, default=0)
 
 args = parser.parse_args()
 
@@ -110,15 +110,15 @@ def split_train_test_proportion(data, test_prop=0.2):
     return data_tr, data_te
 
 
-vad_plays = raw_data.loc[raw_data['user'].isin(vd_users)]
-vad_plays = vad_plays.loc[vad_plays['item'].isin(unique_sid)]
+# vad_plays = raw_data.loc[raw_data['user'].isin(vd_users)]
+# vad_plays = vad_plays.loc[vad_plays['item'].isin(unique_sid)]
 
-vad_plays_tr, vad_plays_te = split_train_test_proportion(vad_plays)
+# vad_plays_tr, vad_plays_te = split_train_test_proportion(vad_plays)
 
-test_plays = raw_data.loc[raw_data['user'].isin(te_users)]
-test_plays = test_plays.loc[test_plays['item'].isin(unique_sid)]
+# test_plays = raw_data.loc[raw_data['user'].isin(te_users)]
+# test_plays = test_plays.loc[test_plays['item'].isin(unique_sid)]
 
-test_plays_tr, test_plays_te = split_train_test_proportion(test_plays)
+# test_plays_tr, test_plays_te = split_train_test_proportion(test_plays)
 
 def numerize(tp, profile2id, show2id):
     uid = tp['user'].apply(lambda x: profile2id[x])
@@ -128,15 +128,15 @@ def numerize(tp, profile2id, show2id):
 train_data = numerize(train_plays, profile2id, show2id)
 train_data.to_csv(os.path.join(output_dir, 'train.csv'), index=False)
 
-vad_data_tr = numerize(vad_plays_tr, profile2id, show2id)
-vad_data_tr.to_csv(os.path.join(output_dir, 'validation_tr.csv'), index=False)
+# vad_data_tr = numerize(vad_plays_tr, profile2id, show2id)
+# vad_data_tr.to_csv(os.path.join(output_dir, 'validation_tr.csv'), index=False)
 
-vad_data_te = numerize(vad_plays_te, profile2id, show2id)
-vad_data_te.to_csv(os.path.join(output_dir, 'validation_te.csv'), index=False)
+# vad_data_te = numerize(vad_plays_te, profile2id, show2id)
+# vad_data_te.to_csv(os.path.join(output_dir, 'validation_te.csv'), index=False)
 
-test_data_tr = numerize(test_plays_tr, profile2id, show2id)
-test_data_tr.to_csv(os.path.join(output_dir, 'test_tr.csv'), index=False)
+# test_data_tr = numerize(test_plays_tr, profile2id, show2id)
+# test_data_tr.to_csv(os.path.join(output_dir, 'test_tr.csv'), index=False)
 
-test_data_te = numerize(test_plays_te, profile2id, show2id)
-test_data_te.to_csv(os.path.join(output_dir, 'test_te.csv'), index=False)
+# test_data_te = numerize(test_plays_te, profile2id, show2id)
+# test_data_te.to_csv(os.path.join(output_dir, 'test_te.csv'), index=False)
 
