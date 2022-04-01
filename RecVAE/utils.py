@@ -59,18 +59,20 @@ def get_data(dataset, global_indexing=False):
     train_data = load_train_data(os.path.join(dataset, 'train.csv'), n_items, n_users, global_indexing=global_indexing)
 
 
-    vad_data_tr, vad_data_te = load_tr_te_data(os.path.join(dataset, 'validation_tr.csv'),
-                                               os.path.join(dataset, 'validation_te.csv'),
-                                               n_items, n_users, 
-                                               global_indexing=global_indexing)
+    # vad_data_tr, vad_data_te = load_tr_te_data(os.path.join(dataset, 'validation_tr.csv'),
+    #                                            os.path.join(dataset, 'validation_te.csv'),
+    #                                            n_items, n_users, 
+    #                                            global_indexing=global_indexing)
 
-    test_data_tr, test_data_te = load_tr_te_data(os.path.join(dataset, 'test_tr.csv'),
-                                                 os.path.join(dataset, 'test_te.csv'),
-                                                 n_items, n_users, 
-                                                 global_indexing=global_indexing)
+    # test_data_tr, test_data_te = load_tr_te_data(os.path.join(dataset, 'test_tr.csv'),
+    #                                              os.path.join(dataset, 'test_te.csv'),
+    #                                              n_items, n_users, 
+    #                                              global_indexing=global_indexing)
     
-    data = train_data, vad_data_tr, vad_data_te, test_data_tr, test_data_te
-    data = (x.astype('float32') for x in data)
+    # data = train_data, vad_data_tr, vad_data_te, test_data_tr, test_data_te
+    data = train_data
+    # data = (x.astype('float32') for x in data)
+    data = data.astype('float32')
     
     return data
 

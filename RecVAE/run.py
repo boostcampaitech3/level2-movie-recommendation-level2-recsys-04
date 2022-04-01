@@ -20,21 +20,21 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='/opt/ml/input/data/train/recvae_data')
 parser.add_argument('--hidden-dim', type=int, default=600)
-parser.add_argument('--latent-dim', type=int, default=200)
+parser.add_argument('--latent-dim', type=int, default=400)
 parser.add_argument('--batch-size', type=int, default=500)
 parser.add_argument('--beta', type=float, default=None)
 parser.add_argument('--gamma', type=float, default=0.005)
 parser.add_argument('--lr', type=float, default=5e-4)
-parser.add_argument('--n-epochs', type=int, default=500)
+parser.add_argument('--n-epochs', type=int, default=110)
 parser.add_argument('--n-enc_epochs', type=int, default=3)
 parser.add_argument('--n-dec_epochs', type=int, default=1)
 parser.add_argument('--not-alternating', type=bool, default=False)
-parser.add_argument('--save', type=str, default='recvae_e500_n1000')
+parser.add_argument('--save', type=str, default='recvae_e110_n0_ldim400')
 parser.add_argument('--train', type=bool, default=True)
 parser.add_argument('--inference', type=bool, default=True)
 args = parser.parse_args()
 
-seed = 1337
+seed = 0
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
@@ -42,7 +42,8 @@ torch.manual_seed(seed)
 device = torch.device("cuda:0")
 
 data = get_data(args.dataset)
-train_data, valid_in_data, valid_out_data, test_in_data, test_out_data = data
+# train_data, valid_in_data, valid_out_data, test_in_data, test_out_data = data
+train_data = data
 
 
 def generate(batch_size, device, data_in, data_out=None, shuffle=False, samples_perc_per_epoch=1):
@@ -146,7 +147,7 @@ best_ndcg = -np.inf
 train_scores, valid_scores = [], []
 
 model = VAE(**model_kwargs).to(device)
-model_best = VAE(**model_kwargs).to(device)
+# model_best = VAE(**model_kwargs).to(device)
 
 learning_kwargs = {
     'model': model,
@@ -175,29 +176,30 @@ if args.train:
         train_scores.append(
             evaluate(model, train_data, train_data, metrics, 0.01)[0]
         )
-        valid_scores.append(
-            evaluate(model, valid_in_data, valid_out_data, metrics, 1)[0]
-        )
+        # valid_scores.append(
+        #     evaluate(model, valid_in_data, valid_out_data, metrics, 1)[0]
+        # )
         
-        if valid_scores[-1] > best_ndcg:
-            best_ndcg = valid_scores[-1]
-            model_best.load_state_dict(deepcopy(model.state_dict()))
+        # if valid_scores[-1] > best_ndcg:
+        #     best_ndcg = valid_scores[-1]
+        #     model_best.load_state_dict(deepcopy(model.state_dict()))
             
 
-        print(f'epoch {epoch} | valid ndcg@100: {valid_scores[-1]:.4f} | ' +
-            f'best valid: {best_ndcg:.4f} | train ndcg@100: {train_scores[-1]:.4f}')
+        # print(f'epoch {epoch} | valid ndcg@100: {valid_scores[-1]:.4f} | ' +
+        #     f'best valid: {best_ndcg:.4f} | train ndcg@100: {train_scores[-1]:.4f}')
+        print(f'epoch {epoch} | train ndcg@100: {train_scores[-1]:.4f}')
 
 
         
-    test_metrics = [{'metric': ndcg, 'k': 100}, {'metric': recall, 'k': 20}, {'metric': recall, 'k': 50}]
+    # test_metrics = [{'metric': ndcg, 'k': 100}, {'metric': recall, 'k': 20}, {'metric': recall, 'k': 50}]
 
-    final_scores = evaluate(model_best, test_in_data, test_out_data, test_metrics)
+    # final_scores = evaluate(model_best, test_in_data, test_out_data, test_metrics)
 
-    for metric, score in zip(test_metrics, final_scores):
-        print(f"{metric['metric'].__name__}@{metric['k']}:\t{score:.4f}")
+    # for metric, score in zip(test_metrics, final_scores):
+        # print(f"{metric['metric'].__name__}@{metric['k']}:\t{score:.4f}")
 
     with open(f'models/{args.save}.pt', 'wb') as f:
-        torch.save(model_best, f)
+        torch.save(model, f)
 
 if args.inference:
     inference(args, device)
