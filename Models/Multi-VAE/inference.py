@@ -51,7 +51,7 @@ def main(args):
     k = 10
     batch_users = output.shape[0]
     output = output.cpu().detach().numpy()
-    idx = bn.argpartition(-output, k, axis=1)           # matrix that ordered recommendation item per user
+    idx = np.argsort(-output, axis=1)           # matrix that ordered recommendation item per user
 
     id2user = dict(map(reversed, user2id.items()))
     id2item = dict(map(reversed, item2id.items()))
