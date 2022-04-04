@@ -1,0 +1,4 @@
+.env
+__pyache__/
+*.pt
+models/
