@@ -1,4 +1,4 @@
 .env
-__pyache__/
+__pycache__/
 *.pt
 models/
