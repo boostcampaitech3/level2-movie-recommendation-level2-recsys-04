@@ -116,6 +116,7 @@ class VASP(nn.Module):
         ease_y = torch.sigmoid(ease_y)
 
         flvae_y, mu, logvar = self.flvae(x)
+        flvae_y = torch.sigmoid(flvae_y)
         output = torch.mul(flvae_y, ease_y)
 
         return output, mu, logvar
