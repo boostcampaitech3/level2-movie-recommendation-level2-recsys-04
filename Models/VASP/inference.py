@@ -70,6 +70,7 @@ def inference(args):
     submission = pd.read_csv(os.path.join(args.root_dir, 'eval', 'sample_submission.csv'))
 
     print("Recommendation Start")
+    model.eval()
     # 10 recommend except seen movie
     user_unique = raw_data['user'].unique()
     index = 0
