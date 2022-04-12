@@ -76,6 +76,9 @@ class Encoder(nn.Module):
         h5 = self.ln5(swish(self.fc5(h4) + h1 + h2 + h3 + h4))
         return self.fc_mu(h5), self.fc_logvar(h5)
     
+    def _set_diag_zero(self):
+        self.fc1.weight.data[self.diag] = 0.
+    
 
 class VAE(nn.Module):
     def __init__(self, hidden_dim, latent_dim, input_dim):
@@ -104,11 +107,13 @@ class VAE(nn.Module):
                 kl_weight = gamma * norm
             elif beta:
                 kl_weight = beta
-
-            mll = (F.log_softmax(x_pred, dim=-1) * user_ratings).sum(dim=-1).mean()
+            
+            alpha = 1
+            MSE_Loss = torch.nn.MSELoss(size_average=False)
+            mll = -MSE_Loss(x_pred,user_ratings)*alpha
+            #(F.log_softmax(x_pred, dim=-1) * user_ratings).sum(dim=-1).mean()
             kld = (log_norm_pdf(z, mu, logvar) - self.prior(user_ratings, z)).sum(dim=-1).mul(kl_weight).mean()
             negative_elbo = -(mll - kld)
-            
             return (mll, kld), negative_elbo
             
         else:

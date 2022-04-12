@@ -29,7 +29,7 @@ raw_data.head()
 
 
 def get_count(tp, id):
-    playcount_groupbyid = tp[[id]].groupby(id, as_index=False)
+    playcount_groupbyid = tp[[id]].groupby(id, as_index=True)
     count = playcount_groupbyid.size()
     return count
 
