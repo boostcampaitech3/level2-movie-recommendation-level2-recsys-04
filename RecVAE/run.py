@@ -1,3 +1,4 @@
+from turtle import update
 import numpy as np
 import pandas as pd
 
@@ -19,17 +20,17 @@ from inference import inference
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='/opt/ml/input/data/train/recvae_data')
-parser.add_argument('--hidden-dim', type=int, default=600)
-parser.add_argument('--latent-dim', type=int, default=400)
-parser.add_argument('--batch-size', type=int, default=500)
+parser.add_argument('--hidden-dim', type=int, default=200)
+parser.add_argument('--latent-dim', type=int, default=500)
+parser.add_argument('--batch-size', type=int, default=2000)
 parser.add_argument('--beta', type=float, default=None)
 parser.add_argument('--gamma', type=float, default=0.005)
 parser.add_argument('--lr', type=float, default=5e-4)
-parser.add_argument('--n-epochs', type=int, default=110)
+parser.add_argument('--n-epochs', type=int, default=120)
 parser.add_argument('--n-enc_epochs', type=int, default=3)
 parser.add_argument('--n-dec_epochs', type=int, default=1)
 parser.add_argument('--not-alternating', type=bool, default=False)
-parser.add_argument('--save', type=str, default='recvae_e110_n0_ldim400')
+parser.add_argument('--save', type=str, default='recvae_b2000_e120_n0_ldim200_hdim500_mse')
 parser.add_argument('--train', type=bool, default=True)
 parser.add_argument('--inference', type=bool, default=True)
 args = parser.parse_args()
@@ -44,7 +45,6 @@ device = torch.device("cuda:0")
 data = get_data(args.dataset)
 # train_data, valid_in_data, valid_out_data, test_in_data, test_out_data = data
 train_data = data
-
 
 def generate(batch_size, device, data_in, data_out=None, shuffle=False, samples_perc_per_epoch=1):
     assert 0 < samples_perc_per_epoch <= 1
@@ -110,7 +110,7 @@ def evaluate(model, data_in, data_out, metrics, samples_perc_per_epoch=1, batch_
         
         if not (data_in is data_out):
             ratings_pred[batch.get_ratings().nonzero()] = -np.inf
-            
+
         for m in metrics:
             m['score'].append(m['metric'](ratings_pred, ratings_out, k=m['k']))
 
@@ -134,7 +134,6 @@ def run(model, opts, train_data, batch_size, n_epochs, beta, gamma, dropout_rate
             
             for optimizer in opts:
                 optimizer.step()
-
 
 model_kwargs = {
     'hidden_dim': args.hidden_dim,

@@ -5,7 +5,6 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-
 def swish(x):
     return x.mul(torch.sigmoid(x))
 
@@ -74,6 +73,7 @@ class Encoder(nn.Module):
         h3 = self.ln3(swish(self.fc3(h2) + h1 + h2))
         h4 = self.ln4(swish(self.fc4(h3) + h1 + h2 + h3))
         h5 = self.ln5(swish(self.fc5(h4) + h1 + h2 + h3 + h4))
+        
         return self.fc_mu(h5), self.fc_logvar(h5)
     
 
@@ -105,11 +105,19 @@ class VAE(nn.Module):
             elif beta:
                 kl_weight = beta
 
-            mll = (F.log_softmax(x_pred, dim=-1) * user_ratings).sum(dim=-1).mean()
+            # mll = (F.log_softmax(x_pred, dim=-1) * user_ratings).sum(dim=-1).mean()
+            mse_function = nn.MSELoss(size_average=False)
+            mse = -mse_function(x_pred, user_ratings)
+            # mse = F.mse_loss(x_pred, user_ratings)
             kld = (log_norm_pdf(z, mu, logvar) - self.prior(user_ratings, z)).sum(dim=-1).mul(kl_weight).mean()
-            negative_elbo = -(mll - kld)
+            # F_loss = torch.pow(1-torch.exp(mse),2)*mse
+            # negative_elbo = -(mll - kld)
+            # negative_elbo = -(mse - kld)
+            negative_elbo = -(mse - kld)
+            # negative_elbo = -(F_loss.sum(dim=-1).mean() - kld)
             
-            return (mll, kld), negative_elbo
+            # return (mll, kld), negative_elbo
+            return (mse, kld), negative_elbo
             
         else:
             return x_pred
