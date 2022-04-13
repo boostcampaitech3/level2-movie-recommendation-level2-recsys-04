@@ -18,12 +18,22 @@ if __name__ == '__main__':
     parser.add_argument('--root_dir', type=str, default=os.environ.get('SM_CHANNEL_ROOT'))
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_TRAIN'))
     parser.add_argument("--output_dir", type=str, default=os.environ.get("SM_OUTPUT_DIR"))
+    parser.add_argument("--np_output_dir", type=str, default=os.environ.get("SM_NP_OUTPUT_DIR"))
     parser.add_argument('--output_name', type=str, default='output', help='path to save the final model')
 
     args = parser.parse_args()
 
     df = pd.read_csv(os.path.join(args.data_dir, 'train_ratings.csv'))
     users = df['user'].unique()
+    items = df['item'].unique()
+    n_users = len(users)
+    n_items = len(items)
+
+    # data change to mapping
+    user2id = dict((uid, i) for i, uid in enumerate(users))
+    item2id = dict((iid, i) for i, iid in enumerate(items))
+    id2user = dict(zip(user2id.values(), user2id.keys()))
+    id2item = dict(zip(item2id.values(), item2id.keys()))
 
     seen_df = pd.read_csv(os.path.join(args.root_dir, 'seen_movie.csv'))
     seen_dic = seen_df.set_index('user').to_dict()['seen']
@@ -32,7 +42,7 @@ if __name__ == '__main__':
 
     model = EASE(df)
     print("Training Start!")
-    model.fit(df, args.lambda_)
+    model.fit(args.lambda_)
 
     submission = pd.read_csv(os.path.join(args.root_dir, 'eval', 'sample_submission.csv'))
 
@@ -41,10 +51,10 @@ if __name__ == '__main__':
     print("Inference Start!")
     for user in tqdm(users):
         seen_list = np.array(seen_dic[user])
-        user_enc = model.user_enc.transform([user])[0]
-        pred = model.pred[user_enc]
+        uid = user2id[user]
+        pred = model.pred[uid]
         pred = np.argsort(-pred)
-        pred = model.item_enc.inverse_transform(pred)
+        pred = np.array([id2item[item] for item in pred])
 
         tmp_items = pred[np.isin(pred, seen_list) == False]
         top_k_items = tmp_items[:10]
@@ -55,4 +65,6 @@ if __name__ == '__main__':
 
     print("Recommendation End!")
 
-    submission.to_csv(os.path.join(args.output_dir, f"{args.output_name}.csv"), index=False)
+    np.save(os.path.join(args.np_output_dir, f'EASE_{args.lambda_}.npy'), model.pred)
+
+    submission.to_csv(os.path.join(args.output_dir, f"{args.output_name}_{args.lambda_}.csv"), index=False)
