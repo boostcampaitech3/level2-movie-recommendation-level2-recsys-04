@@ -5,8 +5,8 @@ from ray.tune.schedulers import ASHAScheduler
 
 if __name__ == '__main__':
     config={
-        "factors": tune.choice([30,35,40,45,50,55,60,65,70]),
-        "iterations": tune.choice([50,60,70,80,90,100,110,120])
+        "factors": tune.choice([50,55,60]),
+        "iterations": tune.choice([30,35,40,45,50,55,60])
     }
 
     asha = ASHAScheduler(
@@ -17,16 +17,16 @@ if __name__ == '__main__':
         brackets=3)
 
     ray.shutdown()
-    ray.init(num_cpus=2)
+    ray.init(num_cpus=3, num_gpus=1)
 
     result = tune.run(
         tune.with_parameters(train_als),
         local_dir='/opt/ml/input/melon/results/',
-        resources_per_trial={"cpu": 2},
+        resources_per_trial={"cpu": 3, "gpu": 1},
         config=config,
         metric="recall",
         mode="max",
-        num_samples=60,
+        num_samples=20,
         scheduler=asha
     )
 
