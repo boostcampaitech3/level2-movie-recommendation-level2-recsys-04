@@ -75,7 +75,7 @@ def train_als(config):
         
 
 
-    diff_path = '/opt/ml/input/melon/phil/EDA/diff_movie4.csv'
+    diff_path = '/opt/ml/input/melon/phil/EDA/diff_movie.csv'
 
     user_unique = test_df['user'].unique()
 
@@ -84,7 +84,7 @@ def train_als(config):
         for item in test_df[test_df['user']==user]['item']:
             k_dic[user].append(item)
 
-    # 유저별 4개 영화가 담긴 데이터 불러오기
+    # 유저별 데이터 불러오기
     diff_df = pd.read_csv(diff_path)
 
     # 딕셔너리 형태로 변경
@@ -92,12 +92,10 @@ def train_als(config):
     for key in tqdm(diff_dic.keys()):
         diff_dic[key] = ast.literal_eval(diff_dic[key])
 
-    # 유저별 gt와 교집합 딕셔너리
     inter_dic={}
     for user in user_unique:
         inter_dic[user] = set(k_dic[user]).intersection(set(diff_dic[user]))
 
-    # 유저별 gt와 같은 개수 딕셔너리
     correct_dic = {}
     for user in inter_dic.keys():
         correct_dic[user] = len(inter_dic[user])
