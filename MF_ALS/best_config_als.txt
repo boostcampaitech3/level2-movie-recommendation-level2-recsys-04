@@ -1,3 +1,0 @@
-train_als_ce83d_00050
-
-{'factors': 55, 'iterations': 50}

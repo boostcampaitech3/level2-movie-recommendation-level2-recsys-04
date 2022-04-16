@@ -1,4 +1,0 @@
-.env
-__pycache__/
-*.pt
-models/
